@@ -7,7 +7,8 @@ public class CameraMovement : MonoBehaviour
     public Transform target;
     public float smoothing;
     private Vector3 velocity = Vector3.zero;
-
+    public Vector2 maxPosition;
+    public Vector2 minPosition;
 
     // Update is called once per frame
     void LateUpdate()
@@ -17,7 +18,8 @@ public class CameraMovement : MonoBehaviour
                                         target.position.y,
                                         transform.position.z
                                         );
+        targetPosition.x = Mathf.Clamp(targetPosition.x, minPosition.x, maxPosition.x);
+        targetPosition.y = Mathf.Clamp(targetPosition.y, minPosition.y, maxPosition.y);
         transform.position = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothing);
-        //transform.LookAt(target);
     }
 }
