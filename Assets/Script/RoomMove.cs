@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class RoomMove : MonoBehaviour
 {
@@ -8,6 +9,10 @@ public class RoomMove : MonoBehaviour
     public Vector2 newMaxPosition;
     public Vector3 playerChange;
     private CameraMovement cam;
+    public bool needText;
+    public GameObject textObj;
+    public string textToShow;
+
 
     // Start is called before the first frame update
     void Start()
@@ -30,5 +35,18 @@ public class RoomMove : MonoBehaviour
 
             obj.transform.position += playerChange;
         }
+
+        if(needText)
+        {
+            textObj.GetComponent<Text>().text = textToShow;
+            StartCoroutine(ShowText());
+        }
+    }
+
+    private IEnumerator ShowText()
+    {
+        textObj.GetComponent<EasyTween>().OpenCloseObjectAnimation();
+        yield return new WaitForSeconds(1.5f);
+        textObj.GetComponent<EasyTween>().OpenCloseObjectAnimation();
     }
 }
