@@ -52,8 +52,10 @@ public class PlayerMovement : MonoBehaviour
            )
         {
             animator.SetBool("ATKing", true);
-            BlockMoving();
-            BlockATK();
+        }
+        else
+        {
+            animator.SetBool("ATKing", false);
         }
     }
 
