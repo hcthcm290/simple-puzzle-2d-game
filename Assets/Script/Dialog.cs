@@ -19,7 +19,7 @@ public class Dialog : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetKeyDown(KeyCode.E) && playerInside)
+        if(Input.GetKeyDown(KeyCode.Z) && playerInside)
         {
             dialog.text = msg;
             dialogBox.SetActive(true);

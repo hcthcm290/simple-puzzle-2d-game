@@ -8,12 +8,17 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D myRigidBody;
     private Vector3 movementChange;
     private Animator animator;
+    private bool canMove;
+    private bool canATK;
+
 
     // Start is called before the first frame update
     void Start()
     {
         myRigidBody = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        canMove = true;
+        canATK = true;
     }
 
     // Update is called once per frame
@@ -23,23 +28,58 @@ public class PlayerMovement : MonoBehaviour
         movementChange.x = Input.GetAxisRaw("Horizontal");
         movementChange.y = Input.GetAxisRaw("Vertical");
 
-        ApplyVelocity();
 
-        if(movementChange != Vector3.zero)
+        if (canMove)
         {
-            animator.SetFloat("moveX", movementChange.x);
-            animator.SetFloat("moveY", movementChange.y);
-            animator.SetBool("Moving", true);
+            ApplyVelocity();
+
+            if (movementChange != Vector3.zero)
+            {
+                animator.SetFloat("moveX", movementChange.x);
+                animator.SetFloat("moveY", movementChange.y);
+                animator.SetBool("Moving", true);
+            }
+            else
+            {
+                animator.SetBool("Moving", false);
+            }
         }
-        else
+
+        // update atk statement //
+        if(
+            Input.GetKey(KeyCode.C) &&
+            canATK
+           )
         {
-            animator.SetBool("Moving", false);
+            animator.SetBool("ATKing", true);
+            BlockMoving();
+            BlockATK();
         }
     }
 
     void ApplyVelocity()
     {
-        //myRigidBody.MovePosition(transform.position + movementChange * speed * Time.deltaTime);
-        myRigidBody.velocity = movementChange * speed;
+        myRigidBody.MovePosition(transform.position + movementChange * speed * Time.deltaTime);
+        //myRigidBody.velocity = movementChange * speed;
+    }
+
+    public void BlockMoving()
+    {
+        canMove = false;
+    }
+
+    public void UnblockMoving()
+    {
+        canMove = true;
+    }
+
+    public void BlockATK()
+    {
+        canATK = false;
+    }
+
+    public void UnblockATK()
+    {
+        canATK = true;
     }
 }
