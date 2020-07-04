@@ -21,17 +21,18 @@ public class Log : Enemy
     // Update is called once per frame
     void Update()
     {
-        if(target != null && ContinueChasing() && animator.GetBool("Chasing"))
+        if(target != null && ContinueChasing() && animator.GetBool("isAwake"))
         {
             float distanceToTarget = Vector3.Distance(transform.position, target.position);
             Vector3 targetPosition = transform.position + Vector3.Normalize(target.position - transform.position) * (distanceToTarget - atkRadius);
             Debug.Log(targetPosition);
             transform.position = Vector3.MoveTowards(transform.position, targetPosition, speed * Time.deltaTime);
         }
-        else if (target == null && transform.position != homePosition)
+        else if (target == null && transform.position != homePosition && animator.GetFloat("WaitingTime") <= 0)
         {
             transform.position = Vector3.MoveTowards(transform.position, homePosition, speed * Time.deltaTime);
         }
+
         UpdateAnimation();
 
     }
@@ -40,19 +41,23 @@ public class Log : Enemy
     {
         if (target != null && ContinueChasing())
         {
-            animator.SetBool("Moving", true);
+            animator.SetBool("AtHome", false);
             animator.SetFloat("MoveX", target.position.x - transform.position.x);
             animator.SetFloat("MoveY", target.position.y - transform.position.y);
         }
         else if (target == null && transform.position != homePosition)
         {
-            animator.SetBool("Moving", true);
             animator.SetFloat("MoveX", homePosition.x - transform.position.x);
             animator.SetFloat("MoveY", homePosition.y - transform.position.y);
         }
-        else
+        else if (target == null && transform.position == homePosition)
         {
-            animator.SetBool("Moving", false);
+            animator.SetBool("AtHome", true);
+        }
+
+        if(target == null)
+        {
+            animator.SetBool("HaveTarget", false);
         }
     }
 
@@ -65,27 +70,22 @@ public class Log : Enemy
     {
         if(other.CompareTag("Player"))
         {
-            if(!animator.GetBool("WakeUp"))
-            {
-                animator.SetBool("WakeUp", true);
-            }
-
+            animator.SetBool("HaveTarget", true);
             target = other.gameObject.transform;
         }
     }
 
+    /// <summary>
+    /// If target move out of chasing radius from the home position, stop chasing
+    /// </summary>
+    /// <returns>true if can keep chasing, otherwise return false</returns>
     bool ContinueChasing()
     {
-        if(Vector3.Distance(transform.position, homePosition) > chasingRadius)
+        if(target != null && Vector3.Distance(transform.position, homePosition) > chasingRadius)
         {
             target = null;
             return false;
         }
         return true;
-    }
-
-    void StartChasing()
-    {
-        animator.SetBool("Chasing", true);
     }
 }
